@@ -50,7 +50,7 @@
         just-flake.outputs.devShell = pkgs.mkShell {
           packages = [ pkgs.just ];
           shellHook = ''
-            ln -sf ${builtins.toString commonJustfile} ./common.just
+            ln -sf ${builtins.toString commonJustfile} ./just-flake.just
 
             echo
             echo "🍎🍎 Run 'just <recipe>' to get started"
