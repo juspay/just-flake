@@ -10,33 +10,25 @@
             inherit text;
           };
         };
-
-        mkFeatureModule = name: desc: justfile: {
-          enable = lib.mkEnableOption desc;
+        mkFeatureSubmodule = { name, description, justfile }: {
+          enable = lib.mkEnableOption description;
           justfile = mkJustfileOption name justfile;
+          outputs.justfile = lib.mkOption {
+            type = lib.types.str;
+            readOnly = true;
+            default =
+              let cfg = config.just-flake.features.${name};
+              in if cfg.enable
+              then "import '${builtins.toString cfg.justfile}'"
+              else "";
+          };
         };
       in
       {
         just-flake.features = {
-          treefmt = mkFeatureModule "treefmt" "Enable treefmt formatting target (fmt)" ''
-            # Auto-format the source tree using treefmt
-            fmt:
-              treefmt
-          '';
-          rust = mkFeatureModule "rust" "Enable Rust targets (w; test)" ''
-            # Compile and watch the project
-            w:
-              cargo watch
-
-            # Run and watch 'cargo test'
-            test:
-              cargo watch -s "cargo test"
-          '';
-          convco = mkFeatureModule "convco" "Enable convco changelog target (changelog)" ''
-            # Generate CHANGELOG.md using recent commits
-            changelog:
-              convco changelog -p ""
-          '';
+          treefmt = mkFeatureSubmodule (import ./nix/features/treefmt.nix);
+          rust = mkFeatureSubmodule (import ./nix/features/rust.nix);
+          convco = mkFeatureSubmodule (import ./nix/features/convco.nix);
         };
 
         just-flake.outputs.devShell = lib.mkOption {
@@ -49,17 +41,9 @@
         cfg = config.just-flake;
         commonJustfile = pkgs.writeTextFile {
           name = "justfile";
-          text = ''
-            ${if cfg.features.treefmt.enable 
-              then "import '${builtins.toString cfg.features.treefmt.justfile}'" 
-              else ""}
-            ${if cfg.features.rust.enable 
-              then "import '${builtins.toString cfg.features.rust.justfile}'" 
-              else ""}
-            ${if cfg.features.convco.enable 
-              then "import '${builtins.toString cfg.features.convco.justfile}'" 
-              else ""}
-          '';
+          text =
+            lib.concatStringsSep "\n"
+              (lib.mapAttrsToList (name: feature: feature.outputs.justfile) cfg.features);
         };
       in
       {
