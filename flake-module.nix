@@ -13,24 +13,20 @@
             inherit text;
           };
         };
-        mkFeatureSubmodule = { name, description, justfile }: {
-          enable = lib.mkEnableOption description;
-          justfile = mkJustfileOption name justfile;
-          outputs.justfile = lib.mkOption {
-            type = lib.types.str;
-            readOnly = true;
-            description = ''
-              The justfile code for importing this feature's justfile.
-
-              See https://just.systems/man/en/chapter_53.html
-            '';
-            default =
-              let cfg = config.just-flake.features.${name};
-              in if cfg.enable
-              then "import '${builtins.toString cfg.justfile}'"
-              else "";
+        mkFeatureSubmodule = { name, description, justfile }:
+          lib.mkOption {
+            inherit description;
+            default = { };
+            type = lib.types.submoduleWith ({
+              modules = [
+                ./nix/feature.nix
+              ];
+              specialArgs = {
+                inherit name justfile;
+                inherit pkgs;
+              };
+            });
           };
-        };
       in
       {
         just-flake.features = {
