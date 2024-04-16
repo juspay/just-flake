@@ -3,11 +3,6 @@
     options =
       let
         inherit (lib) types;
-        featureMod = {
-          imports = [ ./nix/feature.nix ];
-          config._module.args = { inherit pkgs; };
-        };
-        featureType = types.submodule featureMod;
       in
       {
         just-flake = lib.mkOption {
@@ -15,32 +10,11 @@
           type = types.submoduleWith {
             specialArgs = { inherit pkgs; };
             modules = [{
-              imports = [{
-                options.features = lib.mkOption {
-                  type = types.submoduleWith {
-                    modules = [{ freeformType = types.attrsOf featureType; }];
-                    specialArgs = { inherit pkgs; };
-                  };
-                  default = { };
-                };
-              }];
+              imports = [
+                ./nix/features.nix
+              ];
 
               options = {
-                features = {
-                  convco = lib.mkOption {
-                    description = "Add the 'changelog' target calling convco";
-                    type = types.submodule { imports = [ featureMod ]; };
-                  };
-                  rust = lib.mkOption {
-                    description = "Add 'w' and 'test' targets for running cargo";
-                    type = types.submodule { imports = [ featureMod ]; };
-                  };
-                  treefmt = lib.mkOption {
-                    description = "Add the 'fmt' target to format source tree using treefmt";
-                    type = types.submodule { imports = [ featureMod ]; };
-                  };
-                };
-
                 commonFileName = lib.mkOption {
                   type = lib.types.str;
                   default = "just-flake.just";
@@ -66,27 +40,6 @@
         cfg = config.just-flake;
       in
       {
-        just-flake.features = lib.mapAttrs (_: lib.mapAttrs (_: lib.mkDefault)) {
-          convco.justfile = ''
-            # Generate CHANGELOG.md using recent commits
-            changelog:
-              convco changelog -p ""
-          '';
-          rust.justfile = ''
-            # Compile and watch the project
-            w:
-              cargo watch
-
-            # Run and watch 'cargo test'
-            test:
-              cargo watch -s "cargo test"
-          '';
-          treefmt.justfile = ''
-            # Auto-format the source tree using treefmt
-            fmt:
-              treefmt
-          '';
-        };
         just-flake.outputs.devShell =
           let
             commonJustfile = pkgs.writeTextFile {
