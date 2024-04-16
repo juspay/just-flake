@@ -4,6 +4,10 @@
 
 Use [`just`](https://just.systems/) in your Nix devShells with re-usable and share-able targets.
 
+> [!WARNING] 
+> Module options API is subject to change.
+
+
 ## Usage
 
 In your `flake.nix`

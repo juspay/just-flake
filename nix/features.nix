@@ -1,3 +1,5 @@
+# This largely inspired by the use of freeformType in 
+# https://github.com/cachix/git-hooks.nix/blob/master/modules/hooks.nix
 { pkgs, lib, ... }:
 
 let
@@ -19,6 +21,7 @@ in
     };
   }];
 
+  # NOTE: At somepoint, we may want to add `settings` options to some of these features.
   options.features = {
     convco = lib.mkOption {
       description = "Add the 'changelog' target calling convco";
