@@ -10,7 +10,7 @@ Use [`just`](https://just.systems/) in your Nix devShells with re-usable and sha
 
 ## Usage
 
-In your `flake.nix`
+In your `flake.nix`:
 
 ```nix
 # In flake-parts' perSystem
@@ -28,6 +28,17 @@ In your `flake.nix`
       };
   };
 }
+```
+
+In your `justfile`:
+
+```just
+# See flake.nix (just-flake)
+import 'just-flake.just'
+
+# Display the list of recipes
+default:
+    @just --list
 ```
 
 Then, add `config.just-flake.outputs.devShell` to the `inputsFrom` of your devShell.
