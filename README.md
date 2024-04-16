@@ -25,7 +25,7 @@ In your `flake.nix`:
         hello:
         echo Hello World
       '';
-      };
+    };
   };
 }
 ```
