@@ -1,22 +1,20 @@
-{ config, name, justfile, pkgs, lib, ... }:
+{ config, name, lib, pkgs, ... }:
 
-let
-  mkJustfileOption = text: lib.mkOption {
-    type = lib.types.path;
-    readOnly = true;
-    description = ''
-      The justfile representing this feature.
-    '';
-    default = pkgs.writeTextFile {
-      name = "${name}.just";
-      inherit text;
-    };
-  };
-in
 {
   options = {
     enable = lib.mkEnableOption "Enable this feature";
-    justfile = mkJustfileOption justfile;
+    justfile = lib.mkOption {
+      type = lib.types.either lib.types.str lib.types.path;
+      description = ''
+        The justfile representing this feature.
+      '';
+      apply = x:
+        if builtins.isPath x then x else
+        pkgs.writeTextFile {
+          name = "${name}.just";
+          text = x;
+        };
+    };
     outputs.justfile = lib.mkOption {
       type = lib.types.str;
       readOnly = true;
