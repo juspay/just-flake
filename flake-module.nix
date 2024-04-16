@@ -2,17 +2,6 @@
   perSystem = { config, pkgs, lib, ... }: {
     options =
       let
-        mkJustfileOption = name: text: lib.mkOption {
-          type = lib.types.path;
-          readOnly = true;
-          description = ''
-            The justfile representing this feature.
-          '';
-          default = pkgs.writeTextFile {
-            name = "${name}.just";
-            inherit text;
-          };
-        };
         mkFeatureSubmodule = { name, description, justfile }:
           lib.mkOption {
             inherit description;
