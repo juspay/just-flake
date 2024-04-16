@@ -10,7 +10,7 @@ Use [`just`](https://just.systems/) in your Nix devShells with re-usable and sha
 
 ## Usage
 
-In your `flake.nix`:
+Add the following to your [flake-parts](https://flake.parts/) based `flake.nix` after importing this module:
 
 ```nix
 # In flake-parts' perSystem
@@ -30,7 +30,7 @@ In your `flake.nix`:
 }
 ```
 
-In your `justfile`:
+This will add a shellHook that generates a `just-flake.just` symlink (which should be gitignore'ed). Use that by creating a `justfile` as follows:
 
 ```just
 # See flake.nix (just-flake)
@@ -43,7 +43,7 @@ default:
 
 Then, add `config.just-flake.outputs.devShell` to the `inputsFrom` of your devShell.
 
-Resulting devShell banner:
+Resulting devShell banner and/or output of running `just`:
 
 ```
 🍎🍎 Run 'just <recipe>' to get started
