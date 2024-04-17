@@ -55,3 +55,7 @@ Available recipes:
     test      # Run and watch 'cargo test'
     w         # Compile and watch the project
 ```
+
+## Examples
+
+- https://github.com/juspay/nix-rs
