@@ -25,15 +25,15 @@ in
   options.features = {
     convco = lib.mkOption {
       description = "Add the 'changelog' target calling convco";
-      type = types.submodule { imports = [ featureMod ]; };
+      type = featureType;
     };
     rust = lib.mkOption {
       description = "Add 'w' and 'test' targets for running cargo";
-      type = types.submodule { imports = [ featureMod ]; };
+      type = featureType;
     };
     treefmt = lib.mkOption {
       description = "Add the 'fmt' target to format source tree using treefmt";
-      type = types.submodule { imports = [ featureMod ]; };
+      type = featureType;
     };
   };
 
