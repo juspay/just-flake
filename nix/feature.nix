@@ -21,7 +21,7 @@
       description = ''
         The justfile code for importing this feature's justfile.
 
-        See https://just.systems/man/en/chapter_53.html
+        See https://just.systems/man/en/chapter_55.html
       '';
       default =
         if config.enable
